@@ -2,43 +2,24 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HiloGame.Domain.Models
+namespace HiloGame.Domain.Models;
+
+
+public record GameState(
+    GameDifficulty Difficulty,
+    GameRange Range,
+    int MysteryNumber,
+    int GuessCount,
+    bool IsGameWon,
+    bool IsGameOver)
 {
-    public class GameState
+    public GameState(GameDifficulty difficulty, GameRange range, int mysteryNumber)
+        : this(difficulty, range, mysteryNumber, 0, false, false)
     {
-        public GameDifficulty Difficulty { get;  }
-        public GameRange Range { get; }
-        public int MysteryNumber { get; }
-        public int GuessCount { get; private set; }
-        public bool IsGameWon { get; private set; }
-        public int CurrentNumber { get;  }
-
-        //this can be used to introduce new game time with implicit max attempts based on difficulty
-        public int RemainingAttempts { get; }
-        public bool IsGameOver { get; private set; }
-
-        public GameState(GameDifficulty difficulty, GameRange range, int mysteryNumber)
+        if (!range.IsWithinRange(mysteryNumber))
         {
-            if (!range.IsWithinRange(mysteryNumber))
-            {
-                throw new ArgumentException($"Mystery number must be within range {range}.", nameof(mysteryNumber));
-            }
-
-            Difficulty = difficulty;
-            Range = range;
-            MysteryNumber = mysteryNumber;
-            GuessCount = 0;
-            IsGameOver = false;
-            IsGameWon = false;
+            throw new ArgumentException($"Mystery number must be within range {range}.", nameof(mysteryNumber));
         }
-
-        public void IncrementGuessCount() => GuessCount++;
-
-        public void SetGameOver(bool won)
-        {
-            IsGameOver = true;
-            IsGameWon = won;
-        }
-
     }
+
 }

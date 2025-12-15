@@ -1,44 +1,46 @@
 ﻿using HiloGame.Domain.Models;
 using HiloGame.Domain.Services;
+using System;
 
-public class GameController
+internal class GameController
 {
-    private ConsoleIO _consoleIO;
-    private GameService _gameService;
+    private readonly IConsoleIO _consoleIO;
+    private readonly IGameService _gameService;
     private GameState? _currentGame;
 
-    public GameController(ConsoleIO consoleIO, GameService gameService)
+    public GameController(IConsoleIO consoleIO, IGameService gameService)
     {
         _consoleIO = consoleIO;
         _gameService = gameService;
     }
 
-    public void StarGame()
+    public void StartGame()
     {
         try
         {
             GameDifficulty difficulty = SelectDifficulty();
-            
+
             _currentGame = _gameService.InitializeGame(difficulty);
             DisplayGameStart();
             PlayGame();
         }
         catch (Exception ex)
         {
-            _consoleIO.WriteLine($"Error during the game {ex.Message}");
+            _consoleIO.WriteLine($"Error during the game: {ex.Message}");
         }
     }
 
     private void PlayGame()
     {
-        _consoleIO.WriteLine("\nPress any key to start to start the Game Session, ...");
-        _consoleIO.WriteLine("To exit the game session, press \"ESC\" or propose \"0\" for mistery number during the game ");
-        var chrPressed =  _consoleIO.ReadKey();
-        
-        if (chrPressed == 27) // ESC key
+
+        _consoleIO.WriteLine("\nPress any key to start the Game Session, ...");
+        _consoleIO.WriteLine("To exit the game session, press \"ESC\" or propose \"0\" for mystery number during the game ");
+        var chrPressed = _consoleIO.ReadKey();
+
+        if (chrPressed == ConsoleKey.Escape)
         {
-            ExitGameSeesion();
-            return;
+            ExitGameSession(); 
+            return;
         }
 
         if (_currentGame == null) return;
@@ -49,8 +51,8 @@ public class GameController
             string? input = _consoleIO.ReadLine();
             if (input == "0")
             {
-                ExitGameSeesion();
-                return;
+                ExitGameSession(); 
+                return;
             }
             if (!int.TryParse(input, out int guess))
             {
@@ -58,15 +60,34 @@ public class GameController
                 continue;
             }
 
-            var result = _gameService.ProcessGuess(_currentGame, guess);
-            _consoleIO.WriteLine($"{result.Feedback} - Guess #{result.GuessCount}");
+            GuessResult result = ProcessAndUpdateState(guess);
 
+            if (result.Feedback == GuessFeedback.Correct)
+            {
+                _consoleIO.WriteLine($"\nCongratulations! You've guessed the correct number {result.Guess} in {result.GuessCount} attempts!");
+                return;
+            }
+
+            string message = result.Feedback switch
+            {
+                GuessFeedback.TooLow => "HI!",
+                GuessFeedback.TooHigh => "LO!",
+                _ => "Unexpected feedback."
+            };
+
+            _consoleIO.WriteLine($"{message} - Guess #{result.GuessCount}");
         }
-
     }
 
-    private void ExitGameSeesion()
+    private GuessResult ProcessAndUpdateState(int guess)
     {
+        var (result, newState) = _gameService.ProcessGuess(_currentGame!, guess);
+        _currentGame = newState;
+        return result;
+    }
+
+    private void ExitGameSession() 
+    {
         _consoleIO.WriteLine("\nExiting the game session...");
     }
 

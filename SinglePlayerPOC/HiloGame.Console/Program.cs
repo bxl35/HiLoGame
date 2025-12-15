@@ -3,13 +3,13 @@ using HiloGame.Domain.Services;
 using HiLoGame.SinglePlayerPOC.Console;
 
 
-var consoleIO = new ConsoleIO();
-var gameService = new GameService();
+var consoleIO = new ConsoleIO(); 
+var randomNumberService = new RandomNumberService(); 
+IGameService gameService = new GameService(randomNumberService);
 var gameController = new GameController(consoleIO, gameService);
 var applicationController = new ApplicationController(consoleIO, gameController);
+
 applicationController.Run();
-
-
 
 
 /// <summary>
@@ -20,7 +20,7 @@ public interface IConsoleIO
     void WriteLine(string message);
     void Write(string message);
 
-    char? ReadKey();
+    ConsoleKey ReadKey();
     string? ReadLine();
 }
 
@@ -36,7 +36,7 @@ public class ConsoleIO : IConsoleIO
 
     public string? ReadLine() => Console.ReadLine();
 
-    public char? ReadKey() => Console.ReadKey().KeyChar;
+    public ConsoleKey ReadKey() => Console.ReadKey(true).Key;
     
 }
 

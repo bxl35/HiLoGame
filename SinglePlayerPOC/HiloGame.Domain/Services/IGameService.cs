@@ -3,15 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HiloGame.Domain.Services
+namespace HiloGame.Domain.Services;
+
+public interface IGameService
 {
-    public interface IGameService
-    {
 
-        GameState InitializeGame(GameDifficulty difficulty);
-        GuessResult ProcessGuess(GameState gameState, int guess);
+    GameState InitializeGame(GameDifficulty difficulty);
+    (GuessResult Result, GameState NewState) ProcessGuess(GameState gameState, int guess);
 
-        GameState? CurrentGame { get; }
-
-    }
 }

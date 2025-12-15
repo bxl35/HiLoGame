@@ -1,48 +1,66 @@
 ﻿using HiloGame.Domain.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace HiloGame.Domain.Services
+namespace HiloGame.Domain.Services;
+
+public class GameService : IGameService
 {
-    public class GameService : IGameService
+    
+    private readonly IRandomNumberService _rng;
+
+    public GameService(IRandomNumberService randomNumberGenerator)
     {
+        _rng = randomNumberGenerator;
+    }
 
-        private GameState? _currentGame;
-        private readonly Random _random = new();
+    public GameState InitializeGame(GameDifficulty difficulty)
+    {
+        int rangeSize = (int)difficulty;
+        int minBoundary = _rng.GenerateMinBoundary();
 
-        public GameState? CurrentGame => _currentGame;
+        // The maximum number the player is allowed to guess 
+        int intendedMaxValue = minBoundary + rangeSize;
 
-        public GameState InitializeGame(GameDifficulty difficulty)
+        // Upper bound for the random number generator 
+        int rngExclusiveMax = intendedMaxValue + 1;
+
+        int mysteryNumber = _rng.GenerateMysteryNumber(minBoundary, rngExclusiveMax);
+
+        // GameRange is created with the intended MaxValue ([50, 60])
+        var gameRange = new GameRange(minBoundary, intendedMaxValue);
+        var newState = new GameState(difficulty, gameRange, mysteryNumber);
+
+        return newState;
+    }
+
+    public (GuessResult Result, GameState NewState) ProcessGuess(GameState gameState, int guess)
+    {
+        if (gameState.IsGameOver)
         {
-            int rangeSize = (int)difficulty;
-            int minBoundary = _random.Next(1, 1000);
-            int maxBoundary = minBoundary + rangeSize + 1;
-            int mysteryNumber = _random.Next(minBoundary, maxBoundary + 1);
-
-            var gameRange = new GameRange(minBoundary, maxBoundary);
-            _currentGame = new GameState(difficulty, gameRange, mysteryNumber);
-
-            return _currentGame;
+            throw new InvalidOperationException("Game is already over. Cannot process additional guesses.");
         }
 
-        public GuessResult ProcessGuess(GameState gameState, int guess)
+        GameState updatedState = gameState with
         {
-            if (gameState.IsGameOver)
+            GuessCount = gameState.GuessCount + 1
+        };
+
+
+        GuessFeedback feedback;
+        if (guess == gameState.MysteryNumber)
+        {
+            updatedState = updatedState with
             {
-                throw new InvalidOperationException("Game is already over. Cannot process additional guesses.");
-            }
-
-            gameState.IncrementGuessCount();
-
-            if (guess == gameState.MysteryNumber)
-            {
-                gameState.SetGameOver(true);
-                return new GuessResult(guess, gameState.GuessCount, "Congrats! You win!", true);
-            }
-
-            string feedback = guess < gameState.MysteryNumber ? "LO" : "HI";
-            return new GuessResult(guess, gameState.GuessCount, feedback, false);
+                IsGameOver = true,
+                IsGameWon = true
+            };
+            feedback = GuessFeedback.Correct;
         }
+        else
+        {
+            feedback = guess < gameState.MysteryNumber ? GuessFeedback.TooLow : GuessFeedback.TooHigh;
+        }
+        var guessResult = new GuessResult(guess, updatedState.GuessCount, feedback);
+        return (guessResult, updatedState);
     }
 }

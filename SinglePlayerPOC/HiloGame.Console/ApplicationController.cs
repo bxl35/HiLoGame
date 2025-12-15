@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace HiLoGame.SinglePlayerPOC.Console
 {
@@ -39,7 +37,7 @@ namespace HiLoGame.SinglePlayerPOC.Console
 
         private void DisplayGoodbyeMessage()
         {
-            throw new NotImplementedException();
+            _consoleIO.WriteLine("\nThank you for playing the Hi-Lo Game! Goodbye.");
         }
 
         private void ProcessMainMenuInput()
@@ -51,7 +49,7 @@ namespace HiLoGame.SinglePlayerPOC.Console
                 switch (userInput)
                 {
                     case "1":
-                        _gameController.StarGame();
+                        _gameController.StartGame();
                         break;
                     case "2":
                         _isApplicationRunning = false;
@@ -77,7 +75,7 @@ namespace HiLoGame.SinglePlayerPOC.Console
 
         private void DisplayWelcomeMessage()
         {
-            _consoleIO.WriteLine("########  Welcome to Hi-Lo Game  ########");
+            _consoleIO.WriteLine("########  Welcome to Hi-Lo Game  ########");
         }
     }
 }
