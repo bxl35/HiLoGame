@@ -1,8 +1,10 @@
 ﻿using HiloGame.Domain.Models;
 using HiloGame.Domain.Services;
+using static HiloGame.Domain.Enums;
 using Moq;
-using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace HiloGame.Domain.Tests;
 
@@ -28,8 +30,9 @@ public class GameServiceTests
         int expectedMysteryNumber = 55;
         GameDifficulty difficulty = GameDifficulty.Easy; 
 
-        _mockRng!.Setup(rng => rng.GenerateMinBoundary()).Returns(expectedMin); 
+        _mockRng!.Setup(rng => rng.GenerateMinBoundary()).Returns(expectedMin);
 
+        
         var intendedMaxValue = expectedMin + (int)difficulty;
 
         var rngExclusiveMax = intendedMaxValue + 1;
@@ -68,18 +71,21 @@ public class GameServiceTests
         // Assert
         Assert.Multiple(() =>
         {
+            
             Assert.That(result.Feedback, Is.EqualTo(GuessFeedback.Correct), "Feedback should be GuessFeedback.Correct.");
             Assert.That(result.GuessCount, Is.EqualTo(6), "Guess count in result should be (5 -> 6).");
 
+             
             Assert.That(newState.IsGameOver, Is.True, "New state should be Game Over.");
             Assert.That(newState.IsGameWon, Is.True, "New state should be Game Won.");
             Assert.That(newState.GuessCount, Is.EqualTo(6), "New state GuessCount should be incremented.");
 
-            //Check Original State
+            
             Assert.That(initialState.GuessCount, Is.EqualTo(5), "Original state must remain unchanged.");
         });
     }
 
+ 
     [TestCase(50, GuessFeedback.TooHigh, "50 should be High (LO) when target is 42.")]
     [TestCase(30, GuessFeedback.TooLow, "30 should be Low (HI) when target is 42.")]
     public void ProcessGuess_IncorrectGuess_ReturnsCorrectFeedback(int guess, GuessFeedback expectedFeedback, string message)
