@@ -3,6 +3,7 @@ using HiloGame.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace HiloGame.Infrastructure.Persistence.Repositories;
 
@@ -13,6 +14,11 @@ public class GameRepository : IGameRepository
     public GameRepository(ApplicationDbContext dbContext)
     {
         _context = dbContext;
+    }
+
+    public async Task<GameState?> GetGameByIdAsync(Guid gameId, CancellationToken cancellationToken)
+    {
+        return await _context.Games.FindAsync(new object[] { gameId }, cancellationToken);
     }
 
     public async Task<GameState?> GetGameByIdAsync(Guid gameId)

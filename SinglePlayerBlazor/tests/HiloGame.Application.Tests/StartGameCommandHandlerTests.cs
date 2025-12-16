@@ -1,4 +1,5 @@
-﻿using HiloGame.Application.Games.Commands;
+﻿using HiloGame.Application.Common.Interfaces;
+using HiloGame.Application.Games.Commands;
 using HiloGame.Domain.Models;
 using HiloGame.Domain.Services;
 using Moq;
@@ -23,8 +24,9 @@ public class StartGameCommandHandlerTests
         mockGameService
             .Setup(x => x.InitializeGame(difficulty))
             .Returns(expectedState);
+        var mockRepository = new Mock<IGameRepository>();
 
-        var handler = new StartGameCommandHandler(mockGameService.Object);
+        var handler = new StartGameCommandHandler(mockGameService.Object, mockRepository.Object);
         var command = new StartGameCommand(difficulty);
 
         // ACT
@@ -35,4 +37,5 @@ public class StartGameCommandHandlerTests
         Assert.That(result.Difficulty, Is.EqualTo(difficulty));
         mockGameService.Verify(x => x.InitializeGame(difficulty), Times.Once);
     }
+   
 }
