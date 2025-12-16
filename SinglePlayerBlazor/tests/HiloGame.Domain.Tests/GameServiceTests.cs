@@ -57,10 +57,10 @@ public class GameServiceTests
         // Arrange
         int correctGuess = 42;
         GameState initialState = new GameState(
-          GameDifficulty.Normal,
-          new GameRange(1, 100),
-          mysteryNumber: correctGuess
-        ) with
+            GameDifficulty.Normal,
+            new GameRange(1, 100),
+            mysteryNumber: correctGuess
+            ) with
         {
             GuessCount = 5 
         };
@@ -93,10 +93,10 @@ public class GameServiceTests
         // Arrange
         int mysteryNumber = 42;
         GameState initialState = new GameState(
-          GameDifficulty.Normal,
-          new GameRange(1, 100),
-          mysteryNumber: mysteryNumber
-        ) with
+            GameDifficulty.Normal,
+            new GameRange(1, 100),
+            mysteryNumber: mysteryNumber
+            ) with
         {
             GuessCount = 1
         };
@@ -119,10 +119,10 @@ public class GameServiceTests
     {
         // Arrange
         GameState finishedState = new GameState(
-      GameDifficulty.Easy,
-      new GameRange(1, 10),
-      mysteryNumber: 5
-    ) with
+            GameDifficulty.Easy,
+            new GameRange(1, 10),
+            mysteryNumber: 5
+            ) with
         {
             GuessCount = 3,
             IsGameWon = true,

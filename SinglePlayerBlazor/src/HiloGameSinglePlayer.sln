@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiloGame.Application.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiloGame.Domain.Tests", "..\tests\HiloGame.Domain.Tests\HiloGame.Domain.Tests.csproj", "{03DE9216-9705-3672-9768-5B9A45ABA211}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiloGame.Infrastructure.Tests", "..\tests\HiloGame.Infrastructure.Tests\HiloGame.Infrastructure.Tests.csproj", "{874744CE-3416-FC31-3355-E4CA0C701D1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{03DE9216-9705-3672-9768-5B9A45ABA211}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03DE9216-9705-3672-9768-5B9A45ABA211}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03DE9216-9705-3672-9768-5B9A45ABA211}.Release|Any CPU.Build.0 = Release|Any CPU
+		{874744CE-3416-FC31-3355-E4CA0C701D1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{874744CE-3416-FC31-3355-E4CA0C701D1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{874744CE-3416-FC31-3355-E4CA0C701D1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{874744CE-3416-FC31-3355-E4CA0C701D1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{9511FD97-340F-CFAF-73D3-E4B58DAC5D69} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{03DE9216-9705-3672-9768-5B9A45ABA211} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{874744CE-3416-FC31-3355-E4CA0C701D1E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {291053EB-95C7-450D-8BCC-77E30DBF9956}
