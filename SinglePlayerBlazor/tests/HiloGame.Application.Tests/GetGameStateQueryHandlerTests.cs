@@ -24,7 +24,7 @@ public class GetGameStateQueryHandlerTests
             GameId = gameId
         };
         mockRepository
-            .Setup(x => x.GetGameByIdAsync(gameId))
+            .Setup(x => x.GetGameByIdAsync(gameId, CancellationToken.None))
             .ReturnsAsync(expectedState);
 
         var handler = new GetGameStateQueryHandler(mockRepository.Object);
@@ -35,6 +35,6 @@ public class GetGameStateQueryHandlerTests
 
         // ASSERT
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.GameId, Is.EqualTo(gameId));
+        Assert.That(result?.GameId, Is.EqualTo(gameId));
     }
 }

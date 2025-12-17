@@ -21,14 +21,17 @@ public class GameRepository : IGameRepository
         return await _context.Games.FindAsync(new object[] { gameId }, cancellationToken);
     }
 
-    public async Task<GameState?> GetGameByIdAsync(Guid gameId)
-    {
-        return await _context.Games.FindAsync(gameId);
-    }
-
     public async Task SaveGameAsync(GameState state, CancellationToken cancellationToken)
     {
         _context.Games.Add(state);
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task UpdateGameAsync(GameState state, CancellationToken cancellationToken)
+    {
+        _context.Games.Update(state);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+   
 }

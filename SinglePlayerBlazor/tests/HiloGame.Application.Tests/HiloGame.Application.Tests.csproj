@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\HiloGame.Application\HiloGame.Application.csproj" />
+    <ProjectReference Include="..\..\src\HiloGame.Domain\HiloGame.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

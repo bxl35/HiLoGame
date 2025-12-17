@@ -15,5 +15,12 @@ public class Enums
         Expert = 1000
     }
 
+    public enum GuessFeedback
+    {
+        Undefined = 0,  // safe default
+        TooLow,         // represents 'HI'
+        TooHigh,        // represents 'LO' 
+        Correct         // set when player guessed the mystery number
+    }
 
 }

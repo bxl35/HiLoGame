@@ -18,7 +18,7 @@ namespace HiloGame.Application.Games.Queries
         }
         public async Task<GameState?> Handle(GetGameStateQuery request, CancellationToken cancellationToken)
         {
-            var state =  await _repository.GetGameByIdAsync(request.GameId);
+            var state =  await _repository.GetGameByIdAsync(request.GameId, cancellationToken);
             return state;
         }
 
