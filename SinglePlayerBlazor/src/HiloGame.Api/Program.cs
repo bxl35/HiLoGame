@@ -32,6 +32,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddValidatorsFromAssembly(typeof(IGameRepository).Assembly);
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+string corsPolicy = "BlazorGameClient";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(corsPolicy, policy =>
+        policy.WithOrigins("http://localhost:5000", "https://localhost:5001","https://localhost:8443") 
+              .AllowAnyMethod()
+              .AllowAnyHeader());
+});
+
 
 var app = builder.Build();
 
@@ -42,6 +52,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.MapOpenApi();
 }
+
+
+app.UseCors(corsPolicy);
+
 
 app.UseAuthorization();
 

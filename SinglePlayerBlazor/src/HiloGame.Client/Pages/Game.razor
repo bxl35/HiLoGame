@@ -1,0 +1,147 @@
+﻿@page "/game"
+@using HiloGame.Domain
+@using HiloGame.Domain.Models
+@inject HttpClient Http
+
+
+<PageTitle>Hilo SinglePlayer</PageTitle>
+
+<div class="container mt-5">
+    
+    <h1 class="text-center mb-4">&#127919; Hilo Mystery Number</h1>
+
+    @if (_currentGame == null)
+    {
+        <div class="card shadow-sm p-4 text-center">
+            <h3>Select Difficulty</h3>
+            <div class="d-flex justify-content-center gap-3 mt-4">
+                @foreach (Enums.GameDifficulty diff in Enum.GetValues(typeof(Enums.GameDifficulty)))
+                {
+                    <button class="btn btn-outline-primary btn-lg" @onclick="() => StartNewGame(diff)">
+                        @diff (@((int)diff) tries)
+                    </button>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-lg p-4">
+            <div class="d-flex justify-content-between">
+                <span>Difficulty: <strong>@_currentGame.Difficulty</strong></span>
+                <span>Attempts: <strong>@_currentGame.GuessCount</strong></span>
+            </div>
+
+            <hr />
+
+            <div class="text-center my-4">
+                <h4>Guess the number between @_currentGame.Range.MinValue and @_currentGame.Range.MaxValue</h4>
+                @if (_isCorrect == false)
+                { 
+                    <div class="input-group mb-3 w-50 mx-auto">
+                        <input type="number" class="form-control" @onkeydown="@MakeAGuessKeydown"  @bind="_currentGuess" placeholder="Enter your guess..." />
+                        <button class="btn btn-success" @onclick="MakeGuess">Submit Guess</button>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(_feedbackMessage))
+                {
+                    <div class="alert @(_isCorrect ? "alert-success" : "alert-info") mt-3">
+                        <h4>@_feedbackMessage</h4>
+                    </div>
+                }
+                @if (_isCorrect == true)
+                {
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        <button class="btn btn-success" @onclick="() => StartNewGame()">Start New Game</button>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+</div>
+
+@code {
+    private GameState? _currentGame;
+    private int _currentGuess;
+    private string _feedbackMessage = "";
+    private bool _isCorrect = false;
+
+    private async Task StartNewGame()
+    {
+        _isCorrect = false;
+        _currentGame = null;
+        _feedbackMessage = "";
+        await Task.CompletedTask;
+    }
+
+    private async Task StartNewGame(Enums.GameDifficulty difficulty)
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/games", new { Difficulty = (int)difficulty });
+            if (response.IsSuccessStatusCode)
+            {
+                _currentGame = await response.Content.ReadFromJsonAsync<GameState>();
+                _feedbackMessage = "Game started! Good luck.";
+            }
+
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
+    private async Task MakeGuess()
+    {
+        if (_currentGame == null) return;
+
+        var response = await Http.PostAsJsonAsync($"api/games/{_currentGame.GameId}/guess", _currentGuess);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<GuessResult>();
+            switch (result?.Feedback)
+            {
+                case Enums.GuessFeedback.TooLow:
+                    _feedbackMessage = "HI!";
+                    break;
+                case Enums.GuessFeedback.TooHigh:
+                    _feedbackMessage = "LO!";
+                    break;
+                default:
+                    break;
+            }
+            //_feedbackMessage = $"Result: {result.Feedback}";
+            var updated =  _currentGame with 
+            {
+                GuessCount = result.GuessCount
+            };
+            
+            _currentGame = updated;
+
+            if (result.Feedback == Enums.GuessFeedback.Correct)
+            {
+                _isCorrect = true;
+                _feedbackMessage = "Correct! You won the game!";
+            }
+        }
+        else
+        {
+            _feedbackMessage = "Invalid guess. Please try again.";
+        }
+    }
+
+    public async Task MakeAGuessKeydown(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            await MakeGuess();
+        }
+    }
+}
+
+
+
