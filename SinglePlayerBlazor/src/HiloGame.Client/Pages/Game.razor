@@ -1,5 +1,6 @@
 ﻿@page "/game"
 @using HiloGame.Domain
+@using HiloGame.Domain.Dtos
 @using HiloGame.Domain.Models
 @inject HttpClient Http
 
@@ -63,7 +64,8 @@
 </div>
 
 @code {
-    private GameState? _currentGame;
+    //private GameState? _currentGame;
+    private GameStateDto? _currentGame;
     private int _currentGuess;
     private string _feedbackMessage = "";
     private bool _isCorrect = false;
@@ -83,7 +85,7 @@
             var response = await Http.PostAsJsonAsync("api/games", new { Difficulty = (int)difficulty });
             if (response.IsSuccessStatusCode)
             {
-                _currentGame = await response.Content.ReadFromJsonAsync<GameState>();
+                _currentGame = await response.Content.ReadFromJsonAsync<GameStateDto>();
                 _feedbackMessage = "Game started! Good luck.";
             }
 

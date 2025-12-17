@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MediatR;
+using HiloGame.Domain.Dtos;
 using HiloGame.Application.Games.Commands;
 using HiloGame.Application.Games.Queries;
 using HiloGame.Infrastructure.Persistence;
@@ -16,7 +17,7 @@ namespace HiloGame.Api.Controllers
         public GamesController(IMediator mediator) => _mediator = mediator;
 
         [HttpPost]
-        public async Task<IActionResult> StartGame([FromBody] StartGameCommand command)
+        public async Task<ActionResult<GameStateDto>> StartGame([FromBody] StartGameCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
