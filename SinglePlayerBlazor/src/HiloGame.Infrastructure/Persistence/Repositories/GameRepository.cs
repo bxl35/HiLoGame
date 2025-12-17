@@ -1,5 +1,6 @@
 ﻿using HiloGame.Application.Common.Interfaces;
 using HiloGame.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,7 +19,10 @@ public class GameRepository : IGameRepository
 
     public async Task<GameState?> GetGameByIdAsync(Guid gameId, CancellationToken cancellationToken)
     {
-        return await _context.Games.FindAsync(new object[] { gameId }, cancellationToken);
+        return await _context.Games
+            .AsNoTracking()
+            .FirstOrDefaultAsync(g => g.GameId == gameId, cancellationToken);
+
     }
 
     public async Task SaveGameAsync(GameState state, CancellationToken cancellationToken)

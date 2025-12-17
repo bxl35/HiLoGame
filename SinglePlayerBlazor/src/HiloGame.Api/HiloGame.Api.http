@@ -1,6 +1,35 @@
-@HiloGame.Api_HostAddress = http://localhost:5044
+@base_url = http://localhost:5000
+@gameId = bd22c4fe-d78c-4265-afe1-55d426a8f44a
 
-GET {{HiloGame.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Start a new game
+POST {{base_url}}/api/games
+Content-Type: application/json
+{
+  "difficulty": 10
+}
+
+### Get Game State
+GET {{base_url}}/api/games/{{gameId}}
+
+### Make a valid Guess
+POST {{base_url}}/api/games/{{gameId}}/guess
+Content-Type: application/json
+
+5
+
+### Make an invalid Guess 
+# 400 Bad Request
+POST {{base_url}}/api/games/{{gameId}}/guess
+Content-Type: application/json
+
+-1
+
+### Make a high (invalid) guess
+# 400 Bad Request
+POST {{base_url}}/api/games/{{gameId}}/guess
+Content-Type: application/json
+
+1001
+
 
 ###
