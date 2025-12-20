@@ -25,7 +25,7 @@ namespace HiloGame.Data.Entities
         public int GuessAttempts { get; set; }
 
         public Player Owner { get; set; }
-        public ICollection<Player> Players { get; set; } = new List<Player>();
+        public ICollection<GamePlayer> Players { get; set; } = new List<GamePlayer>();
 
         public ICollection<Guess> Guesses { get; set; } = new List<Guess>();
 

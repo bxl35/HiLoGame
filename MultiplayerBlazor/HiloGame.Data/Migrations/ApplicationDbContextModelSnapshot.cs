@@ -76,6 +76,36 @@ namespace HiloGame.Data.Migrations
                     b.ToTable("Games");
                 });
 
+            modelBuilder.Entity("HiloGame.Data.Entities.GamePlayer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsReady")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LeftAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("PlayerId");
+
+                    b.ToTable("GamePlayers");
+                });
+
             modelBuilder.Entity("HiloGame.Data.Entities.Guess", b =>
                 {
                     b.Property<Guid>("Id")
@@ -117,16 +147,11 @@ namespace HiloGame.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<Guid?>("GameId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GameId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -145,6 +170,25 @@ namespace HiloGame.Data.Migrations
                     b.Navigation("Owner");
                 });
 
+            modelBuilder.Entity("HiloGame.Data.Entities.GamePlayer", b =>
+                {
+                    b.HasOne("HiloGame.Data.Entities.Game", "Game")
+                        .WithMany("Players")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HiloGame.Data.Entities.Player", "Player")
+                        .WithMany()
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+
+                    b.Navigation("Player");
+                });
+
             modelBuilder.Entity("HiloGame.Data.Entities.Guess", b =>
                 {
                     b.HasOne("HiloGame.Data.Entities.Game", "Game")
@@ -160,13 +204,6 @@ namespace HiloGame.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("HiloGame.Data.Entities.Player", b =>
-                {
-                    b.HasOne("HiloGame.Data.Entities.Game", null)
-                        .WithMany("Players")
-                        .HasForeignKey("GameId");
                 });
 
             modelBuilder.Entity("HiloGame.Data.Entities.Game", b =>

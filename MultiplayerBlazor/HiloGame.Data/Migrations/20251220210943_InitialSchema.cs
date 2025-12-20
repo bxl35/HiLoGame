@@ -12,6 +12,19 @@ namespace HiloGame.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Players",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    DisplayName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Players", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Games",
                 columns: table => new
                 {
@@ -33,25 +46,40 @@ namespace HiloGame.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Games", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Games_Players_OwnerPlayerId",
+                        column: x => x.OwnerPlayerId,
+                        principalTable: "Players",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Players",
+                name: "GamePlayers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    DisplayName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    GameId = table.Column<Guid>(type: "uuid", nullable: true)
+                    GameId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PlayerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsReady = table.Column<bool>(type: "boolean", nullable: false),
+                    JoinedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LeftAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Players", x => x.Id);
+                    table.PrimaryKey("PK_GamePlayers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Players_Games_GameId",
+                        name: "FK_GamePlayers_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GamePlayers_Players_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "Players",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -83,6 +111,16 @@ namespace HiloGame.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_GamePlayers_GameId",
+                table: "GamePlayers",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GamePlayers_PlayerId",
+                table: "GamePlayers",
+                column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Games_OwnerPlayerId",
                 table: "Games",
                 column: "OwnerPlayerId");
@@ -98,40 +136,26 @@ namespace HiloGame.Data.Migrations
                 column: "PlayerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Players_GameId",
-                table: "Players",
-                column: "GameId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Players_UserId",
                 table: "Players",
                 column: "UserId",
                 unique: true);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Games_Players_OwnerPlayerId",
-                table: "Games",
-                column: "OwnerPlayerId",
-                principalTable: "Players",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Games_Players_OwnerPlayerId",
-                table: "Games");
+            migrationBuilder.DropTable(
+                name: "GamePlayers");
 
             migrationBuilder.DropTable(
                 name: "Guesses");
 
             migrationBuilder.DropTable(
-                name: "Players");
+                name: "Games");
 
             migrationBuilder.DropTable(
-                name: "Games");
+                name: "Players");
         }
     }
 }

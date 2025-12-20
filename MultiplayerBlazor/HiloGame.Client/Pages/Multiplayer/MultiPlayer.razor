@@ -1,0 +1,165 @@
+﻿@page "/multiplayer"
+@using HiloGame.Core
+@using HiloGame.Core.Models
+@using Microsoft.AspNetCore.Authorization
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@attribute [Authorize]
+
+<PageTitle>MultiPlayer</PageTitle>
+<h3>MultiPlayer Game Rooms</h3>
+
+
+
+@if (availableGames == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+
+    <div>
+        <a class="btn btn-success mb-3" href="/creategameroom">Create New Game Room</a>
+        <button class="btn btn-primary mb-3" @onclick="LoadAvailableGamesAsync">Refresh Available Games</button>
+    </div>
+
+    @if (showCreateGameForm)
+    {
+        <div class="card shadow-sm p-4 text-center">
+            <h3>Select Difficulty</h3>
+            <div class="d-flex justify-content-center gap-3 mt-4">
+                @foreach (Enums.DifficultyLevel diff in Enum.GetValues(typeof(Enums.DifficultyLevel)))
+                {
+                    <button class="btn btn-outline-primary btn-lg" @onclick="() => CreateNewGame(diff)">
+                        @diff (@((int)diff) tries)
+                    </button>
+                }
+            </div>
+        </div>
+    }
+
+    @if (availableGames.Count() == 0)
+    {
+        <p>No active rooms. Create one!</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Game</th>
+                    <th>Players</th>
+                    <th>Difficulty</th>
+                    <th>Owner</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var game in availableGames)
+                {
+                    <tr>
+                        <td>@game.DisplayName</td>
+                        <td>@game.PlayerCount / 4</td>
+                        <td>@game.DifficultyLevel</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" @onclick="() => JoinGame(game.GameId)">Join</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+
+
+
+@code {
+
+    private IEnumerable<GameModel>? availableGames = null;
+    bool showCreateGameForm = true;
+    private bool showCreateForm = false;
+    private string newRoomName { get { return $"Multiplayer - {selectedDifficulty}"; } }
+    private int selectedDifficulty = 2;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAvailableGamesAsync();
+    }
+
+    private async Task LoadAvailableGamesAsync()
+    {
+        // Fetch available games
+        try
+        {
+            if (availableGames == null)
+            {
+                availableGames = await Http.GetFromJsonAsync<IEnumerable<GameModel>>("api/games/available");
+            }
+        }
+        catch (Exception ex)
+        {
+
+            errorMessage = $"Error loading available games: {ex.Message}";
+        }
+    }
+
+    private async Task CreateNewGame(Enums.DifficultyLevel difficulty)
+    {
+        selectedDifficulty = (int)difficulty;
+
+        string roomName = $"{selectedDifficulty.ToString()} - {DateTime.Now.ToString("HHmmss")}";
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/game/createGame", new
+            {
+                roomName = newRoomName,
+                difficultyLevel = selectedDifficulty
+            });
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<CreateGameResponse>();
+                Navigation.NavigateTo($"/gameroom/{result?.GameId}");
+            }
+            else
+            {
+                errorMessage = "Failed to create room";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+    }
+
+
+    private async Task JoinGame(string gameId)
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/game/joinGame", new { gameId });
+
+            if (response.IsSuccessStatusCode)
+            {
+                Navigation.NavigateTo($"/gameroom/{gameId}");
+            }
+            else
+            {
+                errorMessage = "Failed to join room";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+    }
+
+}

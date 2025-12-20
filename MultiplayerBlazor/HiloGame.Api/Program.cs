@@ -1,10 +1,13 @@
 using HiloGame.Data;
+using HiloGame.Domain.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -19,9 +22,11 @@ Log.Logger = new LoggerConfiguration()
 
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Host.UseSerilog();
 
-
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IDateProvider, DateProvider>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

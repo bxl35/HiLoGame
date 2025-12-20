@@ -9,17 +9,14 @@ namespace HiloGame.Data
 {
     public class ApplicationDbContext : DbContext
     {
-
-        
-        public ApplicationDbContext([NotNull] DbContextOptions options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options)
         {
         }
 
-
-
-        DbSet<Game> Games => Set<Game>();
-        DbSet<Player> Players => Set<Player>();
-        DbSet<Guess> Guesses => Set<Guess>();
+        public DbSet<Game> Games { get; set; } = null!;
+        public DbSet<Player> Players { get; set; } = null!;
+        public DbSet<GamePlayer> GamePlayers { get; set; } = null!;
+        public DbSet<Guess> Guesses { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -62,14 +59,28 @@ namespace HiloGame.Data
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
+            modelBuilder.Entity<GamePlayer>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.PlayerId).IsRequired();
+                entity.Property(e => e.GameId).IsRequired();
+
+                entity.HasOne(e => e.Game)
+                      .WithMany(g => g.Players)
+                      .HasForeignKey(e => e.GameId)
+                      .OnDelete(DeleteBehavior.Cascade);
+                
+            });
+
 
         }
-        
-        
-        public void MigrateAndCreateData()
-        {
-            Database.Migrate();
 
+
+        [ExcludeFromCodeCoverage]
+        public void MigrateAndCreateData()
+        { 
+            Database.Migrate();
+            
             if (Games.Any())
             {
                 Games.RemoveRange(Games);
