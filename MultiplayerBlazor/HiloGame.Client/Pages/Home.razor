@@ -1,0 +1,25 @@
+﻿@page "/"
+@using HiloGame.Client.Models
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject HttpClient Http
+<PageTitle>Home</PageTitle>
+
+<h1>Welcome to Hilo Game</h1>
+
+
+@code {
+    private string response;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            response = await Http.GetFromJsonAsync<string>("api/home") ?? "Error at Home";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading HomeController: {ex.Message}");
+        }
+    }
+}

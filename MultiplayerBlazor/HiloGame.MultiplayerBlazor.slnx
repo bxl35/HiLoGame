@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Project Path="HiloGame.Api/HiloGame.Api.csproj" />
+  <Project Path="HiloGame.Client/HiloGame.Client.csproj" />
+  <Project Path="HiloGame.Core/HiloGame.Core.csproj" Id="a63162f5-abaf-4110-8896-dbcc21e311ff" />
+  <Project Path="HiloGame.Data/HiloGame.Data.csproj" Id="ce8f4cc9-fb31-4d92-b4cf-7f74e6acb898" />
+  <Project Path="HiloGame.Domain/HiloGame.Domain.csproj" Id="c1490e9c-c0bb-4f84-bd97-fd2da7ac5dc1" />
+  <Project Path="HiloGame.IdentityServer/HiloGame.IdentityServer.csproj" Id="8a121763-81e7-429a-ae07-f4da0a7cae59" />
+</Solution>

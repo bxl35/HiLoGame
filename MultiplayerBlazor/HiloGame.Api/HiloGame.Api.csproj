@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
+	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1">
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+	  <PackageReference Include="OpenTelemetry.Api" Version="1.14.0" />
+	  <PackageReference Include="Scalar.AspNetCore" Version="1.2.44" />
+	  <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />
+	  <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+	  <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+	  <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+	  <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+	  <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.10.0" />
+	  <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.10.0" />
+	  <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.10.1" />
+	  <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
+	  <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.0.0-beta.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HiloGame.Core\HiloGame.Core.csproj" />
+    <ProjectReference Include="..\HiloGame.Data\HiloGame.Data.csproj" />
+  </ItemGroup>
+
+</Project>
